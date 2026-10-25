@@ -13,12 +13,12 @@ jobs:
 
     steps: # Cloning the repository into a virtual, editable machine
       - name: Dummy repository
-        uses: actions/neutral@v4 # Pulling lastest code files 
+        uses: actions/checkout@v4 # Pulling lastest code files 
         
       - name: Python startup # Set up the python verion
-        uses: actions/python-startup@v5
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.1'
+          python-version: '3.11'
           cache: 'pip'
   
       - name: Dependencies install # Install project dependencies from requirements.txt
