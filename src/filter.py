@@ -2,6 +2,17 @@ import numpy as np
 import pandas as pd
 from scipy.signal import butter, filtfilt
 from pathlib import Path
+import argparse
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="Apply low-pass filter to vehicle telemetry.")
+    parser.add_argument('--input_file', type=str, default="data/processed/simulation_telemetry.csv",
+                        help="Path to raw simulation telemetry CSV.")
+    parser.add_argument('--output_file', type=str, default="data/processed/filtered_telemetry.csv",
+                        help="Path to save filtered telemetry CSV.")
+    parser.add_argument('--cutoff_hz', type=float, default=15.0,
+                        help="Low-pass filter cutoff frequency (Hz).")
+    return parser.parse_args()
 
 def butter_lowpass(cutoff_hz, fs, order=4):
   """ Designs a digital butterworth low pass filter.
@@ -21,10 +32,10 @@ def apply_lowpass_filter(data, cutoff_hz=15, fs=50, order=4):
   filtered_data = filtfilt(b,a,data)
   return filtered_data
 
-def process_telemetry_file(input_path="data/processed/simulation_telemetry.csv",
-                           output_path="data/processed/filtered_telemetry.csv",
-                           cutoff_hz=15):
-  file_path = Path(input_path)
+if __name__ == "__main__":
+  args = parse.arguments()
+  
+  file_path = Path(args.input_path)
   if not file_path.exists():
     raise FileNotFoundError(f"Error: Input file '{file_path}' not found. Run dynamics.py first")
   df = pd.read_csv(file_path)
@@ -42,7 +53,4 @@ def process_telemetry_file(input_path="data/processed/simulation_telemetry.csv",
   out_file.parent.mkdir(parents=True, exist_ok=True)
   df.to_csv(out_file, index=False)
   print(f"6. Filtered telemetry sucessfully saved to {out_file}")
-  return df
 
-if __name__ = "__main__":
-  process_telemetry_file()
