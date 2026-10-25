@@ -5,14 +5,14 @@ install:
   python -m pip install --upgrade pip
   pip install -r requirements.txt
 
+run: # Execute the main vehicle suspension simulation pipeline
+  python src/dynamic.py
+  python src/filter.py
+  python src/evaluate.py
+
 test:
   pytest tests/ -v
 
-run: # Execute the main vehicle suspension simulation pipeline
-  python src/dynamic.py
-
 clean: # Clean any generated artifacts, logs, and python cache files
-  rm -rf data/processed/*.csv # rm is remove, -r is recursively go into directories, -f is force deletion
-  rm -rf __pycache__
-  rm -rf .pytest_cache
-  find . -type d -name "__pycache__" -exec rm - rf {} +
+	rm -rf __pycache__ .pytest_cache src/__pycache__ tests/__pycache__
+	rm -f data/processed/*.csv data/processed/*.png
