@@ -2,6 +2,15 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
+import argparse
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="Evaluate vehicle dynamics metrics and generate plots.")
+    parser.add_argument('--input_file', type=str, default="data/processed/filtered_telemetry.csv",
+                        help="Path to telemetry CSV for evaluation.")
+    parser.add_argument('--output_dir', type=str, default="data/processed",
+                        help="Directory to save evaluation plots.")
+    return parser.parse_args()
 
 def compute_performance_metrics(df):
     metrics = {}
@@ -64,10 +73,8 @@ def generate_evaluation_plots(df, output_dir="data/processed"):
     plt.close()
     print(f"7. Evaluation plot successfully saved to {plot_file}")
 
-def evaluate_pipeline(input_path="data/processed/filtered_telemetry.csv"):
-    """
-    Loads telemetry, calculates evaluation metrics, prints an engineering report, and plots results.
-    """
+if __name__ == "__main__":
+    args = parse_arguments()
     file_path = Path(input_path)
     if not file_path.exists():
         file_path = Path("data/processed/simulation_telemetry.csv")
@@ -86,8 +93,7 @@ def evaluate_pipeline(input_path="data/processed/filtered_telemetry.csv"):
     print(f"11. Max Absolute Suspension Travel:         {metrics['max_suspension_travel_m']*1000:.2f} mm")
     print("="*50 + "\n")
     
-    generate_evaluation_plots(df)  
-    return metrics
+    generate_evaluation_plots(df, args.output_dir)
 
 if __name__ == "__main__":
     evaluate_pipeline()
