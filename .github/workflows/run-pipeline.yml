@@ -1,0 +1,31 @@
+name: Suspension Pipeline
+
+# This workflow will be triggered by every push or pull request to the main branch
+on: # Defines when the worflow can run
+  push:
+    branches: ["main","master"]
+  pull_request:
+    branches: ["main","master"]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest # creates a new linux virtual machine in a neutral dummy environment 
+
+    steps: # cloning the repository into a virtual, editable machine
+      - name: Dummy repository
+        uses: actions/neutral@v4 # pulling lastest code files 
+      - name: Python startup # set up the python verion
+        uses: actions/python-startup@v5
+        with:
+          python-version: '3.1'
+          cache: 'pip'
+      - name: Dependencies install # Install project dependencies from requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt 
+      - name: Test run # Run automated unit tests 
+        run: |
+          pytest tests/
+      - name: Simulation pipeline # Execute the main simulation pipeline via the makefile
+        run: |
+          make run
