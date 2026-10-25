@@ -15,42 +15,38 @@ def parse_arguments():
     return parser.parse_args()
 
 def butter_lowpass(cutoff_hz, fs, order=4):
-  """ Designs a digital butterworth low pass filter.
+    """
+    Designs a digital Butterworth low-pass filter.
+    """
+    nyquist_freq = 0.5 * fs
+    normal_cutoff = cutoff_hz / nyquist_freq
+    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    return b, a
 
-  Parameters:
-    cutoff_hz: float, hz
-    fs: float, sampling frequency in hz
-    order: int, default
-  """
-  nyquist_freq = 0.5*fs
-  normal_cutoff = cutoff_hz/nyquist_freq
-  b,a = butter(order, normal_cutoff, btype='low', analog=False)
-  return b,a
-
-def apply_lowpass_filter(data, cutoff_hz=15, fs=50, order=4):
-  b,a = butter_lowpass(cutoff_hz, fs, order=order)
-  filtered_data = filtfilt(b,a,data)
-  return filtered_data
+def apply_lowpass_filter(data, cutoff_hz=15.0, fs=50.0, order=4):
+    b, a = butter_lowpass(cutoff_hz, fs, order=order)
+    filtered_data = filtfilt(b, a, data)
+    return filtered_data
 
 if __name__ == "__main__":
-  args = parse.arguments()
-  
-  file_path = Path(args.input_path)
-  if not file_path.exists():
-    raise FileNotFoundError(f"Error: Input file '{file_path}' not found. Run dynamics.py first")
-  df = pd.read_csv(file_path)
+    args = parse_arguments()
+    
+    file_path = Path(args.input_file)
+    if not file_path.exists():
+        raise FileNotFoundError(f"Error: Input file '{file_path}' not found. Run dynamics.py first.")
+        
+    df = pd.read_csv(file_path)
 
-  time_steps = np.diff(df['time_s'].values)
-  mean_dt = np.mean(time_steps)
-  fs = 1/mean_dt if mean_dt > 0 else 50
-  print(f"5. Processing signal: Estimated sampling frequency = {fs:.2f} Hz, Cutoff = {cutoff_hz} Hz")
+    time_steps = np.diff(df['time_s'].values)
+    mean_dt = np.mean(time_steps)
+    fs = 1.0 / mean_dt if mean_dt > 0 else 50.0
+    print(f"5. Processing signal: Estimated sampling frequency = {fs:.2f} Hz, Cutoff = {args.cutoff_hz} Hz")
 
-  if 'sprung_acceleration_ms2' in df.columns:
-    raw_accel = df['sprung_acceleration_ms2'].values
-    df['filtered_acceleration_ms2'] = apply_lowpass_filter(raw_accel, cutoff_hz=cutoff_hz, fs=fs)
+    if 'sprung_acceleration_ms2' in df.columns:
+        raw_accel = df['sprung_acceleration_ms2'].values
+        df['filtered_acceleration_ms2'] = apply_lowpass_filter(raw_accel, cutoff_hz=args.cutoff_hz, fs=fs)
 
-  out_file = Path(output_path)
-  out_file.parent.mkdir(parents=True, exist_ok=True)
-  df.to_csv(out_file, index=False)
-  print(f"6. Filtered telemetry sucessfully saved to {out_file}")
-
+    out_file = Path(args.output_file)
+    out_file.parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(out_file, index=False)
+    print(f"6. Filtered telemetry successfully saved to {out_file}")
