@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 from pathlib import Path
-from src.dynamics import quarter_car_ode, 
-load_or_generate_road_profile
+from src.dynamics import quarter_car_ode 
+from src.dynamics import load_or_generate_road_profile
 from src.filter import apply_lowpass_filter
 
 def test_road_profile_generation():
