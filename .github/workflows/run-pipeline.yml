@@ -30,7 +30,7 @@ jobs:
           
       - name: Test run # Run automated unit tests 
         run: |
-          python -m pytest tests/
+          PYTHONPATH=. python -m pytest tests/
           
       - name: Simulation pipeline # Execute the main simulation pipeline via the makefile
         run: |
