@@ -5,6 +5,8 @@ from scipy.integrate import solve_ivp
 from scipy.interpolate import interp1d
 from pathlib import Path
 
+df = pd.read_csv(raw_path, skipinitialspace=True)
+
 def parse_arguments():
     """Command line inputs for simulation configurations"""
     parser = argparse.ArgumentParser(description="Run two-degree-freedom quarter-car suspension simulation.")
