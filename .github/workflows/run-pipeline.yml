@@ -29,7 +29,8 @@ jobs:
           python -m pip install -r requirements.txt 
           
       - name: Test run # Run automated unit tests 
-        run: pythong -m pytest tests/
+        run: |
+          python -m pytest tests/
           
       - name: Simulation pipeline # Execute the main simulation pipeline via the makefile
         run: |
